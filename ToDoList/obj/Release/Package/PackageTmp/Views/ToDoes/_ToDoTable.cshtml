@@ -1,0 +1,49 @@
+﻿@model IEnumerable<ToDoList.Models.ToDo>
+
+<table class="table">
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.CheckBoxFor(modelItem => item.IsCompleted, new { id = item.Id, @class = "ActiveCheck" })
+            </td>
+            <td>
+                @if (!item.IsCompleted)
+                {
+                    @Html.DisplayFor(modelItem => item.Description)
+                }
+                else
+                {
+                    <div class="CompletedToDo">@Html.DisplayFor(modelItem => item.Description)</div>
+                }
+
+            </td>
+            <td>
+                <button type="submit" class="btn btn-default">@Html.ActionLink("Remove", "Delete", new { id = item.Id })</button>
+            </td>
+        </tr>
+    }
+
+</table>
+
+<script>
+    $(document).ready(function () {
+        $('.ActiveCheck').change(function () {
+            var self = $(this);
+            var id = self.attr('id');
+            var value = self.prop('checked');
+
+            $.ajax({
+                url: '/ToDoes/AJAXEdit',
+                data: {
+                    id: id,
+                    value: value
+                },
+                type: 'POST',
+                success: function (result) {
+                    $('#tableDiv').html(result);
+                }
+            });
+        });
+    });
+</script>
